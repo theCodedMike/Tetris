@@ -33,6 +33,9 @@
 
 # Visual Studio cache directory
 .vs/
+.idea/
+.vscode/
+Assets/_Complete-Game*
 
 # Gradle cache directory
 .gradle/
