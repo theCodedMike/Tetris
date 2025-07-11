@@ -2,17 +2,10 @@ using UnityEngine;
 
 public class Group : MonoBehaviour
 {
-    private float _freq;
-
+    private float _freq; // 自动下降频率，2表示每秒下降2次
     private float _time;
-
     private Spawner _spawner;
     
-    private void Awake()
-    {
-        _freq = 0;
-        _time = 0;
-    }
 
     private void Start()
     {

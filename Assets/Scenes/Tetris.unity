@@ -546,6 +546,14 @@ MonoBehaviour:
   - {fileID: 1954434734414742, guid: b1b27081eb889594584f84f9f7c1591e, type: 3}
   - {fileID: 1104199037463958, guid: f160d22afba9e5843869eba4fd2c7478, type: 3}
   - {fileID: 1666099930993718, guid: 697e2902db1c33a4da4da3d2fc948d8f, type: 3}
+  sprites:
+  - {fileID: 21300000, guid: ca3ce4b80f265234c980e9fade2b7952, type: 3}
+  - {fileID: 21300000, guid: cfbe6d532c7b18c4c92e0d40dcef27cc, type: 3}
+  - {fileID: 21300000, guid: b3dd065b05de93f499953b3e1fa74e65, type: 3}
+  - {fileID: 21300000, guid: e51c51ac7d3489449b8cb17de9339bd4, type: 3}
+  - {fileID: 21300000, guid: 0b5e1eae86a55774eae56fe20af4b212, type: 3}
+  - {fileID: 21300000, guid: 8f8ed34dd4e69a84fa84612058ddc7e0, type: 3}
+  - {fileID: 21300000, guid: d6f7be5e4ae0dcb4ebfed1f703fcd88a, type: 3}
   freq: 1.5
 --- !u!1001 &2129248343
 PrefabInstance:
