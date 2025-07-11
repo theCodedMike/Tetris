@@ -17,6 +17,12 @@ public class Group : MonoBehaviour
     private void Start()
     {
         _spawner = FindFirstObjectByType<Spawner>();
+        
+        if (!IsValidGridPos())
+        {
+            print("Game Over!");
+            Destroy(gameObject);
+        }
     }
 
     public void SetFreq(float freq)

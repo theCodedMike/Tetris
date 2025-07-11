@@ -1,11 +1,13 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Grid : MonoBehaviour
 {
     public const int Width = 10; // 游戏场景的宽度
     public const int Height = 20; // 游戏场景的高度
     public static readonly Transform[,] grid = new Transform[Width, Height];
-    
+
+    private static int _score = 0; // 分数
     
     
     // 对坐标进行取整
@@ -71,9 +73,17 @@ public class Grid : MonoBehaviour
             if (IsRowFull(y))
             {
                 DeleteRow(y);
+                _score++;
+                SetScore();
                 DecreaseRowAbove(y + 1);
                 y--;
             }
         }
+    }
+
+    // 设置分数
+    public static void SetScore()
+    {
+        GameObject.Find("Score").GetComponent<Text>().text = $"{_score}";
     }
 }
