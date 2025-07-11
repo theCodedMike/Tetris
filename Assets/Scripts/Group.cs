@@ -6,10 +6,17 @@ public class Group : MonoBehaviour
 
     private float _time;
 
+    private Spawner _spawner;
+    
     private void Awake()
     {
         _freq = 0;
         _time = 0;
+    }
+
+    private void Start()
+    {
+        _spawner = FindFirstObjectByType<Spawner>();
     }
 
     public void SetFreq(float freq)
@@ -18,35 +25,93 @@ public class Group : MonoBehaviour
     }
     
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         _time += Time.deltaTime;
-
-        if (_time * _freq >= 1)
-        {
-            _time = 0;
-            transform.position += Vector3.down;
-        }
         
-        // 向左移动
+        // 按 向左箭头 向左移动
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             transform.position += Vector3.left;
+            if(IsValidGridPos())
+                UpdateGrid();
+            else
+                transform.position += Vector3.right;
         }
-        // 向右移动
+        // 按 向右箭头 向右移动
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             transform.position += Vector3.right;
+            if(IsValidGridPos())
+                UpdateGrid();
+            else
+                transform.position += Vector3.left;
         }
-        // 向下加速下落
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        // 按 向下箭头 加速下落
+        if (Input.GetKeyDown(KeyCode.DownArrow) || _time * _freq >= 1f)
         {
+            _time = 0;
             transform.position += Vector3.down;
+            if(IsValidGridPos())
+                UpdateGrid();
+            else
+            {
+                transform.position += Vector3.up;
+                // 生成下一个方块，并禁用脚本
+                _spawner.SpawnNext();
+                enabled = false;
+            }
         }
-        // 旋转
+        // 按 空格键 旋转
         if (Input.GetKeyDown(KeyCode.Space))
         {
             transform.Rotate(0, 0, -90);
+            if(IsValidGridPos())
+                UpdateGrid();
+            else
+                transform.Rotate(0, 0, 90);
         }
+    }
+
+    // 更新网格状态
+    private void UpdateGrid()
+    {
+        for (int y = 0; y < Grid.Height; y++)
+        {
+            for (int x = 0; x < Grid.Width; x++)
+            {
+                if (Grid.grid[x, y] != null)
+                {
+                    // 检测某一方块是否是该方块的一部分
+                    if (Grid.grid[x, y].parent == transform)
+                        // 移除旧地子方块
+                        Grid.grid[x, y] = null;
+                }
+            }
+        }
+
+        foreach (Transform child in transform)
+        {
+            Vector2 v = Grid.RoundVec2(child.position);
+            Grid.grid[(int)v.x, (int)v.y] = child;
+        }
+    }
+
+    // 位置是否合法
+    private bool IsValidGridPos()
+    {
+        foreach (Transform child in transform)
+        {
+            Vector2 v = Grid.RoundVec2(child.position);
+            // 如果不在边界内
+            if (!Grid.InsideBorder(v))
+                return false;
+
+            // 如果在边界内，但是所在位置有其他方块组
+            if (Grid.grid[(int)v.x, (int)v.y] != null && Grid.grid[(int)v.x, (int)v.y].parent != transform)
+                return false;
+        }
+        
+        return true;
     }
 }

@@ -4,7 +4,7 @@ public class Spawner : MonoBehaviour
 {
     public GameObject[] blocks;
     
-    [Header("移动频率，1表示1秒移动1次")]
+    [Header("方块自动下降频率，2表示每秒下降2次")]
     public float freq;
     
     
