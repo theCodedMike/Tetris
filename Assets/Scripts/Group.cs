@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Group : MonoBehaviour
@@ -31,29 +32,27 @@ public class Group : MonoBehaviour
         // 按 向左箭头 向左移动
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            transform.position += Vector3.left;
-            if(IsValidGridPos())
-                UpdateGrid();
-            else
-                transform.position += Vector3.right;
+            Operate(
+                () => transform.position += Vector3.left, 
+                () => transform.position += Vector3.right
+                );
         }
         // 按 向右箭头 向右移动
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            transform.position += Vector3.right;
-            if(IsValidGridPos())
-                UpdateGrid();
-            else
-                transform.position += Vector3.left;
+            Operate(
+                () => transform.position += Vector3.right, 
+                () => transform.position += Vector3.left
+                );
         }
         // 按 向下箭头 加速下落
         if (Input.GetKeyDown(KeyCode.DownArrow) || _time * _freq >= 1f)
         {
-            _time = 0;
-            transform.position += Vector3.down;
-            if(IsValidGridPos())
-                UpdateGrid();
-            else
+            Operate(() =>
+            {
+                _time = 0;
+                transform.position += Vector3.down;
+            }, () =>
             {
                 transform.position += Vector3.up;
                 
@@ -63,19 +62,27 @@ public class Group : MonoBehaviour
                 // 生成下一个方块，并禁用脚本
                 _spawner.SpawnNext();
                 enabled = false;
-            }
+            });
         }
         // 按 空格键 旋转
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            transform.Rotate(0, 0, -90);
-            if(IsValidGridPos())
-                UpdateGrid();
-            else
-                transform.Rotate(0, 0, 90);
+            Operate(
+                () => transform.Rotate(0, 0, -90), 
+                () => transform.Rotate(0, 0, 90)
+                );
         }
     }
 
+    private void Operate(Action operate, Action actIfInvalid)
+    {
+        operate();
+        if (IsValidGridPos())
+            UpdateGrid();
+        else
+            actIfInvalid();
+    }
+    
     // 更新网格状态
     private void UpdateGrid()
     {
@@ -83,12 +90,12 @@ public class Group : MonoBehaviour
         {
             for (int x = 0; x < Grid.Width; x++)
             {
-                if (Grid.grid[x, y] != null)
+                if (Grid.grid[y, x] != null)
                 {
                     // 检测某一方块是否是该方块的一部分
-                    if (Grid.grid[x, y].parent == transform)
+                    if (Grid.grid[y, x].parent == transform)
                         // 移除旧地子方块
-                        Grid.grid[x, y] = null;
+                        Grid.grid[y, x] = null;
                 }
             }
         }
@@ -96,7 +103,7 @@ public class Group : MonoBehaviour
         foreach (Transform child in transform)
         {
             Vector2 v = Grid.RoundVec2(child.position);
-            Grid.grid[(int)v.x, (int)v.y] = child;
+            Grid.grid[(int)v.y, (int)v.x] = child;
         }
     }
 
@@ -106,12 +113,13 @@ public class Group : MonoBehaviour
         foreach (Transform child in transform)
         {
             Vector2 v = Grid.RoundVec2(child.position);
+            
             // 如果不在边界内
             if (!Grid.InsideBorder(v))
                 return false;
 
             // 如果在边界内，但是所在位置有其他方块组
-            if (Grid.grid[(int)v.x, (int)v.y] != null && Grid.grid[(int)v.x, (int)v.y].parent != transform)
+            if (Grid.grid[(int)v.y, (int)v.x] != null && Grid.grid[(int)v.y, (int)v.x].parent != transform)
                 return false;
         }
         

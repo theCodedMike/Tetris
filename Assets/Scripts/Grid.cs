@@ -5,9 +5,9 @@ public class Grid : MonoBehaviour
 {
     public const int Width = 10; // 游戏场景的宽度
     public const int Height = 20; // 游戏场景的高度
-    public static readonly Transform[,] grid = new Transform[Width, Height];
+    public static readonly Transform[,] grid = new Transform[Height, Width];
 
-    private static int _score = 0; // 分数
+    private static int _score; // 分数
     
     
     // 对坐标进行取整
@@ -27,7 +27,7 @@ public class Grid : MonoBehaviour
     {
         for (int x = 0; x < Width; x++)
         {
-            if (grid[x, y] == null)
+            if (grid[y, x] == null)
                 return false;
         }
 
@@ -39,21 +39,21 @@ public class Grid : MonoBehaviour
     {
         for (int x = 0; x < Width; x++)
         {
-            Destroy(grid[x, y].gameObject);
-            grid[x, y] = null;
+            Destroy(grid[y, x].gameObject);
+            grid[y, x] = null;
         }
     }
 
-    // 删除一行后，将上面地一行下移
+    // 删除一行后，将上面的一行下移
     public static void DecreaseRow(int y)
     {
         for (int x = 0; x < Width; x++)
         {
-            if (grid[x, y] != null)
+            if (grid[y, x] != null)
             {
-                grid[x, y - 1] = grid[x, y];
-                grid[x, y] = null;
-                grid[x, y - 1].position += Vector3.down;
+                grid[y - 1, x] = grid[y, x];
+                grid[y, x] = null;
+                grid[y - 1, x].position += Vector3.down;
             }
         }
     }
@@ -74,7 +74,7 @@ public class Grid : MonoBehaviour
             {
                 DeleteRow(y);
                 _score++;
-                SetScore();
+                UpdateScore();
                 DecreaseRowAbove(y + 1);
                 y--;
             }
@@ -82,7 +82,7 @@ public class Grid : MonoBehaviour
     }
 
     // 设置分数
-    public static void SetScore()
+    public static void UpdateScore()
     {
         GameObject.Find("Score").GetComponent<Text>().text = $"{_score}";
     }
