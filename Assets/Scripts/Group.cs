@@ -57,6 +57,10 @@ public class Group : MonoBehaviour
             else
             {
                 transform.position += Vector3.up;
+                
+                // 删除所有填满的行
+                Grid.DeleteFullRows();
+                
                 // 生成下一个方块，并禁用脚本
                 _spawner.SpawnNext();
                 enabled = false;
